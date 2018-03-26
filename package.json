@@ -1,0 +1,22 @@
+{
+  "name": "coursecoach-server",
+  "version": "1.0.0",
+  "description": "An API server for CourseCoach React Native app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdityaHirapara/coursecoach-server.git"
+  },
+  "author": "AdityaHirapara",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/AdityaHirapara/coursecoach-server/issues"
+  },
+  "homepage": "https://github.com/AdityaHirapara/coursecoach-server#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
