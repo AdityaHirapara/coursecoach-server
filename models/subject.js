@@ -9,4 +9,4 @@ const SubjectSchema = new Schema({
   topics: [{ type: Schema.Types.ObjectId, ref: 'Topic' }]
 });
 
-module.exports = mongoose.model('Subject',SubjectSchema);
+module.exports = mongoose.model('Subject', SubjectSchema);
