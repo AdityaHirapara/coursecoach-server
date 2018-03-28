@@ -26,7 +26,7 @@ app.post('/subjects', (req, res) => {
     let subjects = crs.subjects.map((x) => {
       return x.name;
     });
-    return subjects;
+    res.json(subjects);
   });
 });
 
@@ -43,7 +43,7 @@ app.post('/topics', (req, res) => {
     let topics = sub.topics.map((x) => {
       return { name: x.name, link: x.link };
     });
-    return topics;
+    res.json(topics);
   });
 });
 
