@@ -7,11 +7,18 @@ const mongoose = require('mongoose');
 const Course = require('./models/course');
 const Subject = require('./models/subject');
 const Topic = require('./models/topic');
+const Config = require('./config');
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
-mongoose.connect('link');
+mongoose.connect(Config.link);
+
 
 app.post('/subjects', (req, res) => {
   let course = req.body.course;
@@ -47,7 +54,7 @@ app.post('/topics', (req, res) => {
   });
 });
 
-app.post('/newcourse', (req, res) => {
+app.post('/newcourse', verifyToken, (req, res) => {
   let course = req.body.course;
 
   Course
@@ -55,7 +62,7 @@ app.post('/newcourse', (req, res) => {
     if (err) {
       console.log(err);
     }
-    res.status(200).redirect('file:///home/aditya/coursecoach-form/form.html');
+    res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/upload.html');
   });
 });
 
@@ -81,7 +88,7 @@ app.post('/newsubject', (req, res) => {
         if (uperr) {
           console.log(uperr);
         }
-        res.status(200).redirect('file:///home/aditya/coursecoach-form/form.html');
+        res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/upload.html');
       });
     });
   });
@@ -110,7 +117,7 @@ app.post('/newtopic', (req, res) => {
         if (uperr) {
           console.log(uperr);
         }
-        res.status(200).redirect('file:///home/aditya/coursecoach-form/form.html');
+        res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/upload.html');
       });
     });
   });
@@ -126,15 +133,14 @@ app.get('/courselist', (req, res) => {
     let list = crs.map((c) => {
       return c.name;
     });
-    console.log(list);
     res.send(list);
   });
 });
 
-app.get('/subjectlist', (req, res) => {
-  let course = req.query.crs;
+app.get('/subjectlist/:crs', (req, res) => {
+  let course = req.params.crs;
   Course
-  .findOne({name: course})
+  .findOne({ name: course })
   .populate('subjects')
   .exec( (err, crs) => {
     if (err) {
