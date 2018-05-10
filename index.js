@@ -9,58 +9,38 @@ const Subject = require('./models/subject');
 const Topic = require('./models/topic');
 const Author = require('./models/author');
 const Config = require('./config');
-const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+require('./config/passport')(passport);
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+app.use(session({ secret: Config.secret }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect(Config.link);
 
-function verifyToken(req, res, next) {
-  var token = req.headers['x-access-token'];
-  if (!token){
-    return res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/');
+app.post('/login', passport.authenticate('local', {
+  successRedirect : 'https://adityahirapara.github.io/coursecoach-uploader/upload.html',
+  failureRedirect : 'https://adityahirapara.github.io/coursecoach-uploader',
+  failureFlash : false
+}));
+
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
   }
-  jwt.verify(token, config.secret, function(err, decoded) {
-    if (err){
-      return res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/');
-    }
-    req.userId = decoded.id;
-    next();
-  });
+  res.redirect('https://adityahirapara.github.io/coursecoach-uploader');
 }
-
-app.post('/login', (req, res) => {
-  let name = req.body.name;
-  let password = req.body.pass;
-
-  Author
-  .findOne({ username: name })
-  .exec( (err, user) => {
-    if (err) {
-      console.log(err);
-    }
-    if (user) {
-      if (password === user.password) {
-        var token = jwt.sign({ id: user._id }, Config.secret, {
-          expiresIn: 86400
-        });
-        res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/upload.html');
-      }
-      else {
-        res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/');
-      }
-    }
-    else {
-      res.status(200).redirect('https://adityahirapara.github.io/coursecoach-uploader/');
-    }
-  });
-});
 
 app.post('/subjects', (req, res) => {
   let course = req.body.course;
@@ -96,7 +76,7 @@ app.post('/topics', (req, res) => {
   });
 });
 
-app.post('/newcourse', verifyToken, (req, res) => {
+app.post('/newcourse', isLoggedIn, (req, res) => {
   let course = req.body.course;
 
   Course
@@ -108,7 +88,7 @@ app.post('/newcourse', verifyToken, (req, res) => {
   });
 });
 
-app.post('/newsubject', verifyToken, (req, res) => {
+app.post('/newsubject', isLoggedIn, (req, res) => {
   let course = req.body.course;
   let subject = req.body.subject;
 
@@ -136,7 +116,7 @@ app.post('/newsubject', verifyToken, (req, res) => {
   });
 });
 
-app.post('/newtopic', verifyToken, (req, res) => {
+app.post('/newtopic', isLoggedIn, (req, res) => {
   let subject = req.body.subject;
   let topic = req.body.topic;
   let link = req.body.link;
