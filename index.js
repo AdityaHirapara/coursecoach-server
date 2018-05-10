@@ -35,6 +35,11 @@ app.post('/login', passport.authenticate('local', {
   failureFlash : false
 }));
 
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('https://adityahirapara.github.io/coursecoach-uploader');
+});
+
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
