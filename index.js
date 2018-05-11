@@ -74,9 +74,20 @@ app.post('/topics', (req, res) => {
     if(err) {
       console.log(err);
     }
-    let topics = sub.topics.map((x) => {
+    let general = sub.topics.filter( t => t.typ == "general" ).map((x) => {
       return { name: x.name, link: x.link };
     });
+    let books = sub.topics.filter( t => t.typ == "book" ).map((x) => {
+      return { name: x.name, link: x.link };
+    });
+    let papers = sub.topics.filter( t => t.typ == "paper" ).map((x) => {
+      return { name: x.name, link: x.link };
+    });
+    let topics = {
+      general: general,
+      books: books,
+      papers: papers
+    };
     res.json(topics);
   });
 });

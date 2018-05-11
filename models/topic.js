@@ -6,6 +6,10 @@ const TopicSchema = new Schema({
     type: String,
     required: true
   },
+  typ: {
+  	type: String,
+  	required: true
+  },
   link: {
     type: String,
     required: true
