@@ -135,10 +135,11 @@ app.post('/newsubject', isLoggedIn, (req, res) => {
 app.post('/newtopic', isLoggedIn, (req, res) => {
   let subject = req.body.subject;
   let topic = req.body.topic;
+  let type = req.body.typ;
   let link = req.body.link;
 
   Topic
-  .create({name: topic, link: link}, (err, tp) => {
+  .create({name: topic, typ: type, link: link}, (err, tp) => {
     if (err) {
       console.log(err);
     }
