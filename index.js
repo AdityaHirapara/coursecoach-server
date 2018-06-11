@@ -65,15 +65,20 @@ app.post('/subjects', (req, res) => {
 });
 
 app.post('/topics', (req, res) => {
+  let course = req.body.course;
   let subject = req.body.subject;
 
-  Subject
-  .findOne({ name: subject })
-  .populate('topics')
-  .exec( (err, sub ) => {
+  Course
+  .findOne({ name: course })
+  .populate({
+    path: 'subjects',
+    populate: { path: 'topics' }
+  })
+  .exec( (err, crs ) => {
     if(err) {
       console.log(err);
     }
+    let sub = crs.subjects.filter( s => s.name == subject )[0];
     let general = sub.topics.filter( t => t.typ == "general" ).map((x) => {
       return { name: x.name, link: x.link };
     });
