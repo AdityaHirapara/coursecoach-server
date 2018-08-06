@@ -4,6 +4,7 @@
   "description": "An API server for CourseCoach React Native app",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate",
     "start": "pm2 start process.json",
     "restart": "pm2 restart all",
     "stop": "pm2 stop all",
