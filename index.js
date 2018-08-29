@@ -12,6 +12,7 @@ const Config = require('./config');
 const passport = require('passport');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const MongoStore = require('connect-mongo')(session);
 
 require('./config/passport')(passport);
 
@@ -23,11 +24,18 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-app.use(session({ secret: Config.secret }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 mongoose.connect(Config.link);
+app.set('trust proxy', 1)
+app.use(session({
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: (1 * 60)
+  }),
+  secret: Config.secret
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.post('/login', passport.authenticate('local', {
   successRedirect : 'https://adityahirapara.github.io/coursecoach-uploader/upload.html',
