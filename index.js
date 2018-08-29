@@ -30,7 +30,7 @@ app.set('trust proxy', 1)
 app.use(session({
   store: new MongoStore({
     mongooseConnection: mongoose.connection,
-    ttl: (1 * 60)
+    ttl: (45 * 60)
   }),
   secret: Config.secret
 }));
